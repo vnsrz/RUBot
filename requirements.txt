@@ -2,5 +2,7 @@ loguru~=0.6.0
 python-dotenv~=0.21.0
 python-telegram-bot==13.14
 beautifulsoup4==4.11.1
+soupsieve==2.3.2.post1
+requests==2.28.1
 urllib3==1.26.13
 pymupdf==1.21.0
