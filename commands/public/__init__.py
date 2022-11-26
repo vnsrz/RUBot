@@ -1,3 +1,3 @@
-__all__ = ['start']
+__all__ = ['start', 'cardapio']
 
 from commands.public import *

@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 @logger.catch
 def main():
     defaults = Defaults(parse_mode=ParseMode.HTML)
-    updater = Updater(Config.BOT_TOKEN, defaults=defaults, workers=32)
+    updater = Updater(Config.BOT_TOKEN, defaults=defaults, workers=32)  # type: ignore
     dispatcher = updater.dispatcher
 
     command_router.setup_user_commands(dispatcher)
