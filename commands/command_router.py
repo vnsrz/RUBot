@@ -14,3 +14,4 @@ def setup_admin_commands(dispatcher):
     fn = dispatcher.add_handler
 
     fn(CommandHandler('clean', admin.clean.executor))
+    fn(CommandHandler('users', admin.users.executor))

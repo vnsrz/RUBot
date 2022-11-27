@@ -1,3 +1,3 @@
-__all__ = ['clean']
+__all__ = ['clean', 'users']
 
 from commands.admin import *
