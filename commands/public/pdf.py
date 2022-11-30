@@ -1,5 +1,6 @@
+from os import path, listdir, getcwd
+from database.weekly import WD, WD2
 from telegram import Update
-from commands.public.download import *
 import decorators
 
 def send_pdfs(update: Update, ctx):
@@ -12,6 +13,5 @@ def send_pdfs(update: Update, ctx):
 
 @decorators.chat_type.private
 def executor(update: Update, ctx):
-    get_cardapio()
     send_pdfs(update, ctx)
     

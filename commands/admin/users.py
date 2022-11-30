@@ -1,4 +1,3 @@
-from commands.public.download import *
 from database import user_log
 from telegram import Update
 from config import Config

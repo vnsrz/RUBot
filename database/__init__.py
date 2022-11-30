@@ -1,1 +1,1 @@
-__all__ = ['user_log']
+__all__ = ['user_log', 'weekly']

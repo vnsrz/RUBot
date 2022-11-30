@@ -1,3 +1,3 @@
-__all__ = ['start', 'help', 'img', 'pdf', 'download']
+__all__ = ['start', 'help', 'img', 'pdf']
 
 from commands.public import *
