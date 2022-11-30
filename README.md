@@ -1,12 +1,14 @@
-# Telegram Bot Template
-Convenient, flexible telegram bot template
+# Rubot
+Bot para telegram com o objetivo de facilitar a visualização do cardápio semanal do RU (Restaurante Universitário) da UnB campus Gama.
 
-# Install
-Clone this repository and place your `BOT_TOKEN` from @BotFather in .env. <br/>
-The bot is launched as follows: <br/>
-```sh
-python3 main.py
+## Utilização
+Se inscreva no seguinte [canal](https://t.me/rucardapio) para receber o cardápio toda semana de forma automatizada.  
+Alternativamente, procure no telegram por `@ru_cardapio_bot` e inicie uma conversa para ter acesso aos comandos. 
+
+## Comandos
 ```
-
-# Contributing
-If you have a desire, then you can freely add a Pull Request with your new ideas in the template to my repository, I will be happy to add them!
+/start : mensagem inicial
+/img : retorna uma imagem com o cardápio do almoço
+/pdf : retorna o cardápio completo em formato pdf
+/help : lista os comandos
+```
