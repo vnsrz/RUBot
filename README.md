@@ -1,4 +1,4 @@
-<img src="assets/rubot.png" alt="" width="400" />
+<img src="assets/rubot.png" alt="" width="400" class="center" />
 
 # Rubot
 Bot para telegram com o objetivo de facilitar a visualização do cardápio semanal do RU (Restaurante Universitário) da UnB campus Gama.
