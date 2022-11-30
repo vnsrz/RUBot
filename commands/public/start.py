@@ -1,6 +1,5 @@
 from telegram import Update
 from database import user_log
-import decorators
 
 def usr_log(usr):
     user_log.Users().write(usr)
@@ -13,7 +12,6 @@ def usr_read(update: Update, ctx):
     if not log.__contains__(usr):
         usr_log(usr)
         
-@decorators.chat_type.private
 def executor(update: Update, ctx):
     usr_read(update, ctx)
     msg="Bot para facilitar a visualização do cardápio da semana no RU. Atualmente só mostra o cardápio do Gama."
