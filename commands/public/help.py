@@ -1,8 +1,5 @@
 from telegram import Update
 
-import decorators
-
-@decorators.chat_type.private
 def executor(update: Update, ctx):
     msg="""/start : mensagem inicial
 /img : retorna uma imagem com o cardápio do almoço

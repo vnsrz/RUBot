@@ -25,8 +25,9 @@ def main():
 
     j = updater.job_queue
 
-    j.run_daily(weekly_download, time=time(hour=12, minute=50 , tzinfo=time_zone), days=('5',))
-    j.run_daily(weekly_send, time=time(hour=13, tzinfo=time_zone), days=('5',))
+    j.run_repeating(weekly_send, interval=60, first=10)
+    #j.run_daily(weekly_download, time=time(hour=12, minute=50 , tzinfo=time_zone), days=('5',))
+    #j.run_daily(weekly_send, time=time(hour=13, tzinfo=time_zone), days=('5',))
     
     updater.start_polling(poll_interval=1.0, timeout=5.0)
     updater.idle()

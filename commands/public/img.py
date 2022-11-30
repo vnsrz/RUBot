@@ -1,7 +1,6 @@
 from os import path, listdir, getcwd
 from database.weekly import WD, WD2
 from telegram import Update
-import decorators
 
 def send_imgs(update: Update, ctx):
     chat_id = update.message.chat_id
@@ -12,7 +11,7 @@ def send_imgs(update: Update, ctx):
             ctx.bot.send_photo(chat_id, pic)
 
 
-@decorators.chat_type.private
+
 def executor(update: Update, ctx):
     send_imgs(update, ctx)
     
