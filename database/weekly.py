@@ -9,9 +9,9 @@ import fitz
 import re
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # type: ignore
+
 WD = "".join([getcwd(), "/pdfs/"])
 WD2 = "".join([getcwd(), "/imgs/"])
-
 
 def cache_clean(dir):
     for filename in listdir(dir):
@@ -22,46 +22,75 @@ def cache_clean(dir):
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
-def to_img(name, date):
+def to_img(name):
+    meals = {"cafe": 0, "almoco": 1, "janta": 2}
     doc = fitz.open(name)
-    page = doc.load_page(1)  
-    pix = page.get_pixmap(dpi=300)
-    output = f"{WD2}{date}.png"
-    pix.save(output)
+    for meal in meals:
+        page = doc.load_page(meals[meal])
+        pix = page.get_pixmap(dpi=300)
+        output = f"{WD2}{meal}.png"
+        pix.save(output)
 
 
 def date_picker(menus):
+    global menu_start_date
+    global menu_finish_date
     current_date = datetime.now()
-    buffer = False
 
     for menu in menus:
-        if buffer:
+        menu_day = menu.get('href')[-17:-12]
+        menu_date = datetime(day=int(menu_day[:2]), month=int(menu_day[3:]), year=current_date.year)
+
+        if (menu_date + timedelta(days=4)) >= current_date:  # soma 4 dias na data do cardapio para ver se o dia atual está na mesma semana
+            menu_start_date = menu_date
+            menu_finish_date = menu_date + timedelta(days=6)
             return menu.get('href')
-        menu_day = menu.get('href')[-15:-11]
-        menu_date = datetime(day=int(menu_day[:2]), month=int(menu_day[2:]), year=current_date.year) + timedelta(days=4) # soma 4 dias na data do cardapio para ver se o dia atual está na mesma semana
-
-        if menu_date >= current_date: 
-            return menu.get('href')
-        else:
-            buffer = True
-            
-
-def weekly_send(context: CallbackContext):
-    for file in listdir(WD2):
-        f = path.join(WD2, file)
-        if path.isfile(f):
-            pic = open(f, 'rb')
-            context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic)
+    
+    return 0
 
 
-def weekly_download(context: CallbackContext):
+def send_menu(context: CallbackContext):
+    date_start = menu_start_date.strftime("%d/%m")
+    date_finish = menu_finish_date.strftime("%d/%m")
+
+    if darcy:
+        context.bot.send_message(chat_id=Config.CHAT_ID, text="Não foi encontrado o cardápio atualizado do Gama, então está sendo enviado o do Darcy.")
+
+    f = path.join(WD2, 'cafe.png')
+    if path.isfile(f):
+        pic = open(f, 'rb')
+        context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic, caption=f"<b>Café</b> - {date_start} a {date_finish}")
+
+    f = path.join(WD2, 'almoco.png')
+    if path.isfile(f):
+        pic = open(f, 'rb')
+        context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic, caption=f"<b>Almoço</b> - {date_start} a {date_finish}")
+
+    f = path.join(WD2, 'janta.png')
+    if path.isfile(f):
+        pic = open(f, 'rb')
+        context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic, caption=f"<b>Jantar</b> - {date_start} a {date_finish}")
+
+
+def download_menu(context: CallbackContext):
+    global darcy
+    darcy = 0
     URL = "https://ru.unb.br/index.php/cardapio-refeitorio/"
     page = requests.get(URL, verify=False)
     soup = BeautifulSoup(page.content, "html.parser")
     menus = soup.find_all(href=re.compile("Gama"))
     c = date_picker(menus)
-    date = c[-15:-11]
+    
+    if not c:
+        menus = soup.find_all(href=re.compile("Darcy Ribeiro"))
+        c = date_picker(menus)
+        if not c:
+            context.bot.send_message(chat_id=Config.ADM_ID, text="Nenhum cardápio encontrado.\nhttps://ru.unb.br/index.php/cardapio-refeitorio/")
+            return 0
+        else:
+            darcy = 1
 
+    date = c[-17:-12]
     c_url = "".join(["https://ru.unb.br", c])
     response = requests.get(c_url, verify=False)
     name = f"{WD}{date}.pdf" 
@@ -72,5 +101,12 @@ def weekly_download(context: CallbackContext):
     pdf = open(name, 'wb')
     pdf.write(response.content)
     pdf.close()
-    to_img(name, date)
+    to_img(name)
+
+    return 1
+
+
+def weekly_run(context: CallbackContext):
+    if download_menu(context):
+        send_menu(context)
     
