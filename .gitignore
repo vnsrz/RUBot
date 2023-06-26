@@ -1,7 +1,9 @@
 .vscode/
+debug.py
 
 # Menus
 *.png
+*.jpg
 *.pdf
 
 # Byte-compiled / optimized / DLL files
