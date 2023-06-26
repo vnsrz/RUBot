@@ -13,13 +13,14 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # type: ign
 WD = "".join([getcwd(), "/pdfs/"])
 WD2 = "".join([getcwd(), "/imgs/"])
 
+
 def cache_clean(dir):
     for filename in listdir(dir):
-            file_path = path.join(dir, filename)
-            try:
-                unlink(file_path)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+        file_path = path.join(dir, filename)
+        try:
+            unlink(file_path)
+        except Exception as e:
+            print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
 def to_img(name):
@@ -38,14 +39,20 @@ def date_picker(menus):
     current_date = datetime.now()
 
     for menu in menus:
-        menu_day = menu.get('href')[-17:-12]
-        menu_date = datetime(day=int(menu_day[:2]), month=int(menu_day[3:]), year=current_date.year)
+        # dirty fix
+        if menu.get("href")[-8:-4] == "docx":
+            continue
 
-        if (menu_date + timedelta(days=4)) >= current_date:  # soma 4 dias na data do cardapio para ver se o dia atual está na mesma semana
+        menu_day = menu.get("href")[-17:-12]
+        menu_date = datetime(
+            day=int(menu_day[:2]), month=int(menu_day[3:]), year=current_date.year
+        )
+
+        if (menu_date + timedelta(days=4)) >= current_date:
             menu_start_date = menu_date
             menu_finish_date = menu_date + timedelta(days=6)
-            return menu.get('href')
-    
+            return menu.get("href")
+
     return 0
 
 
@@ -54,22 +61,37 @@ def send_menu(context: CallbackContext):
     date_finish = menu_finish_date.strftime("%d/%m")
 
     if darcy:
-        context.bot.send_message(chat_id=Config.CHAT_ID, text="Não foi encontrado o cardápio atualizado do Gama, então está sendo enviado o do Darcy.")
+        context.bot.send_message(
+            chat_id=Config.CHAT_ID,
+            text="Não foi encontrado o cardápio atualizado do Gama, então está sendo enviado o do Darcy.",
+        )
 
-    f = path.join(WD2, 'cafe.png')
+    f = path.join(WD2, "cafe.png")
     if path.isfile(f):
-        pic = open(f, 'rb')
-        context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic, caption=f"<b>Café</b> - {date_start} a {date_finish}")
+        pic = open(f, "rb")
+        context.bot.send_photo(
+            chat_id=Config.CHAT_ID,
+            photo=pic,
+            caption=f"<b>Café</b> - {date_start} a {date_finish}",
+        )
 
-    f = path.join(WD2, 'almoco.png')
+    f = path.join(WD2, "almoco.png")
     if path.isfile(f):
-        pic = open(f, 'rb')
-        context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic, caption=f"<b>Almoço</b> - {date_start} a {date_finish}")
+        pic = open(f, "rb")
+        context.bot.send_photo(
+            chat_id=Config.CHAT_ID,
+            photo=pic,
+            caption=f"<b>Almoço</b> - {date_start} a {date_finish}",
+        )
 
-    f = path.join(WD2, 'janta.png')
+    f = path.join(WD2, "janta.png")
     if path.isfile(f):
-        pic = open(f, 'rb')
-        context.bot.send_photo(chat_id=Config.CHAT_ID, photo=pic, caption=f"<b>Jantar</b> - {date_start} a {date_finish}")
+        pic = open(f, "rb")
+        context.bot.send_photo(
+            chat_id=Config.CHAT_ID,
+            photo=pic,
+            caption=f"<b>Jantar</b> - {date_start} a {date_finish}",
+        )
 
 
 def download_menu(context: CallbackContext):
@@ -80,12 +102,15 @@ def download_menu(context: CallbackContext):
     soup = BeautifulSoup(page.content, "html.parser")
     menus = soup.find_all(href=re.compile("Gama"))
     c = date_picker(menus)
-    
+
     if not c:
-        menus = soup.find_all(href=re.compile("Darcy Ribeiro"))
+        menus = soup.find_all(href=re.compile("Darcy_Ribeiro"))
         c = date_picker(menus)
         if not c:
-            context.bot.send_message(chat_id=Config.ADM_ID, text="Nenhum cardápio encontrado.\nhttps://ru.unb.br/index.php/cardapio-refeitorio/")
+            context.bot.send_message(
+                chat_id=Config.ADM_ID,
+                text="Nenhum cardápio encontrado.\nhttps://ru.unb.br/index.php/cardapio-refeitorio/",
+            )
             return 0
         else:
             darcy = 1
@@ -93,12 +118,12 @@ def download_menu(context: CallbackContext):
     date = c[-17:-12]
     c_url = "".join(["https://ru.unb.br", c])
     response = requests.get(c_url, verify=False)
-    name = f"{WD}{date}.pdf" 
+    name = f"{WD}{date}.pdf"
 
     cache_clean(WD)
     cache_clean(WD2)
-    
-    pdf = open(name, 'wb')
+
+    pdf = open(name, "wb")
     pdf.write(response.content)
     pdf.close()
     to_img(name)
@@ -109,4 +134,3 @@ def download_menu(context: CallbackContext):
 def weekly_run(context: CallbackContext):
     if download_menu(context):
         send_menu(context)
-    
