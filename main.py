@@ -21,7 +21,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # type: ign
 
 
 def get_day():
-    now = datetime.now() + timedelta(days=6)
+    now = datetime.now()
     if now.weekday() == 6:  # sunday
         return now + timedelta(days=1)
 
