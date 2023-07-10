@@ -17,9 +17,18 @@ WD = "".join([getcwd(), "/pdfs/"])
 WD2 = "".join([getcwd(), "/imgs/"])
 
 bot = Bot(token=BOT_TOKEN)
-date = datetime.now() + timedelta(days=1)
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # type: ignore
+
+
+def get_day():
+    now = datetime.now() + timedelta(days=6)
+    if now.weekday() == 6:  # sunday
+        return now + timedelta(days=1)
+
+    return now - timedelta(days=int(now.weekday()))
+
+
+date = get_day()
 
 
 def send_img(f, date_start, date_finish, caption):
