@@ -6,15 +6,20 @@ from bs4 import BeautifulSoup
 from telegram import Bot
 import requests
 import urllib3
+import sys
 import re
 
 load_dotenv()
 
 BOT_TOKEN = environ.get("BOT_TOKEN")
 ADM_ID = environ.get("ADM_ID")
-CHAT_ID = environ.get("CHAT_ID")
 WD = "".join([getcwd(), "/pdfs/"])
 WD2 = "".join([getcwd(), "/imgs/"])
+
+if sys.argv[1] == "debug":
+    CHAT_ID = environ.get("DEBUG_ID")
+else:
+    CHAT_ID = environ.get("CHAT_ID")
 
 bot = Bot(token=BOT_TOKEN)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # type: ignore
