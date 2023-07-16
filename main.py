@@ -15,11 +15,11 @@ BOT_TOKEN = environ.get("BOT_TOKEN")
 ADM_ID = environ.get("ADM_ID")
 WD = "".join([getcwd(), "/pdfs/"])
 WD2 = "".join([getcwd(), "/imgs/"])
+CHAT_ID = environ.get("CHAT_ID")
 
-if sys.argv[1] == "debug":
-    CHAT_ID = environ.get("DEBUG_ID")
-else:
-    CHAT_ID = environ.get("CHAT_ID")
+if len(sys.argv) > 1:
+    if sys.argv[1] == "debug":
+        CHAT_ID = environ.get("DEBUG_ID")
 
 bot = Bot(token=BOT_TOKEN)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # type: ignore
@@ -124,6 +124,7 @@ def find_menu():
         menu_list = soup.find_all(href=re.compile("Darcy_Ribeiro"))
         menu = menu_picker(menu_list)
         if not menu:
+            print("Nenhum cardápio encontrado.")
             bot.send_message(
                 chat_id=ADM_ID,
                 text="Nenhum cardápio encontrado.\nhttps://ru.unb.br/index.php/cardapio-refeitorio/",
