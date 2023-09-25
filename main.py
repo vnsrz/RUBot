@@ -71,9 +71,10 @@ def send_menu():
 
 def menu_picker(menu_list):
     target = date.strftime("%d-%m")
+    alt = date.strftime("%d/%m")
 
     for menu in menu_list:
-        if target in menu.text:
+        if target in menu.text or alt in menu.text:
             return menu.get("href")
 
     return 0
