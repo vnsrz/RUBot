@@ -70,11 +70,12 @@ def send_menu():
 
 
 def menu_picker(menu_list):
-    target = date.strftime("%d-%m")
-    alt = date.strftime("%d/%m")
+    day = date.strftime("%d")
+    month = date.strftime("%m")
+    exp = f"{day}[^{month}]*{month}"
 
     for menu in menu_list:
-        if target in menu.text or alt in menu.text:
+        if re.search(exp, menu.text):
             return menu.get("href")
 
     return 0
